@@ -1,0 +1,10 @@
+{
+    "cSpell.words": [
+        "Factorio",
+        "uiop"
+    ],
+    "editor.formatOnType": true,
+    "[lisp]": {
+        "editor.wordSeparators": "`|;:'\",()"
+    }
+}

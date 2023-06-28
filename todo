@@ -1,0 +1,20 @@
+# Todo list for todo-list
+## Plan
+MVP without nesting. 
+Then add nesting. 
+Then see where it goes from there.
+
+## For a MVP
+- write and load .db plaintext file
+- sublists 
+- pretty print lists 
+- context manager --- able to go into a sublist and add new todo without needing to 
+- add new todo
+- remove easily, even from within further trees --- maybe syntax like (remove :list :sublist :reminder) 
+- undo
+
+## further ideas 
+- edit todo --- maybe i need to give every todo a unique identifier? Alternatively just remove and add again.
+- custom terminal to interact with it instead of needing to exist inside the lisp image? would require lots of testing first
+    - pretty colours, maybe see [link](https://lispcookbook.github.io/cl-cookbook/os.html)
+    - compile to executable
