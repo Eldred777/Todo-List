@@ -39,7 +39,7 @@
 
 ;; Add a new todo entry to `*database*`. 
 ;; `name`: a 
-(defun add-todo (name &optional (description (symbol-name name)))
+(defun add-todo (name &optional (description " "))
   "Adds a new todo entry to `*database*`. 
   `name` may be a symbol, or a list of symbols.
   "
@@ -49,8 +49,20 @@
      (setf *database*
        (push (list name description nil) *database*)))
     (list
-     ; TODO: implement. traverse down the list `name`, constructing new todos as needed.
-     )))
+     ; TODO: verification that all entries of list are symbols
+     (if (> (length name) 1)
+         ;; TODO: this doesn't work yet. 
+         ;; maybe use a (numberp (position (car name) (values *database*)))
+         (progn (if (member (car name) (values *database*))
+                    ; if yes then find which item has it 
+                    ; if no then need to push onto the database then recursion
+                    () ; TODO: implement 
+                    (add-todo (car name)))
+                (let ((*database* (car *database*))) ; this let traverses down the tree 
+                  ;; FIXME: need more than just car here, particularly in former case 
+                  (add-todo name description)))
+         ; else, one symbol left so use the implementation of this function on symbols
+         (add-todo (car name) description)))))
 
 (defun done-todo (name)
   (setf *database*
