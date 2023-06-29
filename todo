@@ -5,12 +5,12 @@ Then add nesting.
 Then see where it goes from there.
 
 ## For a MVP
-- write and load .db plaintext file
+- DONE: write and load .db plaintext file
 - sublists 
 - pretty print lists 
 - context manager --- able to go into a sublist and add new todo without needing to 
-- add new todo
-- remove easily, even from within further trees --- maybe syntax like (remove :list :sublist :reminder) 
+- HALF-DONE: add new todo, need to come back to this when sublists have been implemented
+- HALF-DONE: remove easily, even from within further trees --- maybe syntax like (remove :list :sublist :reminder) 
 - undo
 
 ## further ideas 
