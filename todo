@@ -20,3 +20,4 @@ Then see where it goes from there.
     - compile to executable
 - GUI in addition to/instead of CLI, possibly [tk?](https://lispcookbook.github.io/cl-cookbook/gui.html)
 - mark as done instead of just deleting
+- priority of todo items
