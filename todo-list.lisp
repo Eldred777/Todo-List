@@ -11,7 +11,7 @@
 
 (defmacro coerce-to-string (name)
   (unless (typep name 'string)
-    (setf name (format nil "~a" name))))
+    (setf name (format nil "~s" name))))
 
 (defun load-database (database-name)
   (coerce-to-string database-name)
@@ -32,7 +32,7 @@
                         :direction :output
                         :if-exists :supersede
                         :if-does-not-exist :create)
-    (format file "~a" *database*)))
+    (format file "~s" *database*)))
 
 (defun clear-database ()
   (setf *database* nil))
