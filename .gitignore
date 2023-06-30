@@ -1,3 +1,7 @@
+scratch.lisp
+.vscode/alive/
+db/
+
 *.FASL
 *.fasl
 *.lisp-temp
@@ -15,6 +19,3 @@
 *.sx32fsl
 *.wx64fsl
 *.wx32fsl
-
-.vscode/alive/
-db/

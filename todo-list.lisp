@@ -2,7 +2,15 @@
 
 (require :uiop)
 
+(defun not-null (l)
+  (not (null l)))
+
+;; Entries to `*database*` are 
+;; entry = (name: symbol, description: string, sublist: list[entry])
 (defvar *database* ())
+(defun get-todo-sublist (entry)
+  (caddr entry))
+
 (defvar *current-database-name* "")
 
 (defparameter *db-path* (concatenate 'string
@@ -37,37 +45,62 @@
 (defun clear-database ()
   (setf *database* nil))
 
-;; Add a new todo entry to `*database*`. 
-;; `name`: a 
-(defun add-todo (name &optional (description " "))
-  "Adds a new todo entry to `*database*`. 
-  `name` may be a symbol, or a list of symbols.
-  "
-  ; entries consist of a name, an optional description, and a list of sub-entries
+(defun position-of-todo (name target-list)
+  (position (car name) (map 'list #'first target-list)))
+
+(defun construct-todo (target-list name &optional (description "_"))
+  ; TODO: implement. constructs a todo recursively in a functional style,
+  ; returning a copy of `target-list` with a new todo in `name` with
+  ; `description` and `sublist`=`nil`. 
+
+  (coerce-to-string description)
+
   (typecase name
-    (symbol
-     (setf *database*
-       (push (list name description nil) *database*)))
-    (list
-     ; TODO: verification that all entries of list are symbols
-     (if (> (length name) 1)
-         ;; TODO: this doesn't work yet. 
-         ;; maybe use a (numberp (position (car name) (values *database*)))
-         (progn (if (member (car name) (values *database*))
-                    ; if yes then find which item has it 
-                    ; if no then need to push onto the database then recursion
-                    () ; TODO: implement 
-                    (add-todo (car name)))
-                (let ((*database* (car *database*))) ; this let traverses down the tree 
-                  ;; FIXME: need more than just car here, particularly in former case 
-                  (add-todo name description)))
-         ; else, one symbol left so use the implementation of this function on symbols
-         (add-todo (car name) description)))))
+    (symbol (push (list name description nil) target-list)) ; [x] test
+    (list ; [ ] test
+         ; TODO: verify non-null, else error 
+         ; TODO: verification that all entries of list are symbols, else error
+         ; TODO: below still not working. 
+         (if (> (length name) 1)
+             (let ((index (position (car name) (map 'list #'first *database*))))
+               (unless (numberp index)
+                 (progn (add-todo (car name))
+                        (setf index 0)))
+               (setf *database* (get-todo-sublist (nth index *database*)))
+               (add-todo (cdr name) description))
+             ; else, one symbol left so use the implementation of this function on symbols
+             (add-todo (car name) description)))))
+
+(defun remove-todo (target-list name)
+  ; TODO: implement. returns a copy of `target-list` with `name` removed
+  )
+
+;; TODO: test 
+(defun add-todo (name &optional (description "_"))
+  "Adds a new todo entry to `*database*`. Defaults to a blank description if none is provided.
+  `name` may be a symbol, or a list of symbols.
+  `description` should be a string that describes the todo entry 
+  "
+
+  *database*)
 
 (defun done-todo (name)
   (setf *database*
     (remove-if (lambda (x) (eql (car x) name))
         *database*)))
+
+(defun rename-todo (name new-name)
+  "Rename the symbol used for a todo."
+  ; TODO: implement 
+  name
+  new-name)
+
+(defun describe-todo (name description)
+  "Change the description used for a todo."
+  ; TODO: implement 
+  ; TODO: option to only update if blank 
+  name
+  description)
 
 (defun show-todo ()
   (format t "~{~{~a: ~a~}~%~}" *database*))
