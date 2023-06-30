@@ -55,25 +55,43 @@
 
   (coerce-to-string description)
 
-  (typecase name
-    (symbol (push (list name description nil) target-list)) ; [x] test
+  (etypecase name
+    (symbol (cons (list name description nil) target-list)) ; [x] test
     (list ; [ ] test
-         ; TODO: verify non-null, else error 
          ; TODO: verification that all entries of list are symbols, else error
          ; TODO: below still not working. 
          (if (> (length name) 1)
-             (let ((index (position (car name) (map 'list #'first *database*))))
-               (unless (numberp index)
-                 (progn (add-todo (car name))
-                        (setf index 0)))
-               (setf *database* (get-todo-sublist (nth index *database*)))
-               (add-todo (cdr name) description))
-             ; else, one symbol left so use the implementation of this function on symbols
-             (add-todo (car name) description)))))
-
-(defun remove-todo (target-list name)
-  ; TODO: implement. returns a copy of `target-list` with `name` removed
-  )
+             (if (not-null target-list)
+                 ; if nil then we have created a new list in the previous step
+                 ; so just create the next entry. 
+                 (cons
+                   (list (car name)
+                         "_"
+                         ; Handle terminal case, we don't want a '(())
+                         (let ((sublist (construct-todo nil (cdr name) description)))
+                           (if (null sublist)
+                               nil
+                               (list sublist))))
+                   target-list) ; TODO: remove repeated code, possibly via lazy evaluation? 
+                 ; else, we need to find the appropriate entry to traverse into,
+                 ; if any such entry exists. 
+                 (let ((index (position (car name) (map 'list #'first target-list))))
+                   (if (numberp index)
+                       ; If exists, simply traverse down and run again
+                       (construct-todo (get-todo-sublist (nth index target-list))
+                                       (cdr name) description)
+                       ; Otherwise we need to add a new entry
+                       (cons
+                         (list (car name)
+                               "_"
+                               ; Handle terminal case, we don't want a '(())
+                               (let ((sublist (construct-todo nil (cdr name) description)))
+                                 (if (null sublist)
+                                     nil
+                                     (list sublist))))
+                         target-list))))
+             ; if nil, just return nil which is handled explicitly below
+             nil))))
 
 ;; TODO: test 
 (defun add-todo (name &optional (description "_"))
@@ -81,8 +99,12 @@
   `name` may be a symbol, or a list of symbols.
   `description` should be a string that describes the todo entry 
   "
+  (setf *database* (construct-todo *database* name description)))
 
-  *database*)
+(defun remove-todo (target-list name)
+  ; TODO: implement. returns a copy of `target-list` with `name` removed
+  )
+
 
 (defun done-todo (name)
   (setf *database*
