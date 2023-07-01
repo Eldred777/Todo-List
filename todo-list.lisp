@@ -49,6 +49,16 @@
 (defun position-of-todo (name target-list)
   (position (car name) (map 'list #'first target-list)))
 
+(defun helper-description-on-last-entry (entry-id description)
+  "Helper function to `construct-todo` that returns `description` when 
+  `entry-id` is a singleton list, and \"_\" otherwise.
+
+  Precondition: 
+    `entry-id` is a list."
+  (if (null (cdr entry-id))
+      description
+      " _"))
+
 (defun construct-todo (target-list entry-id &optional (description "_"))
   ; TODO: implement. constructs a todo recursively in a functional style,
   ; returning a copy of `target-list` with a new todo in `entry-id` with
@@ -71,8 +81,8 @@
          ; if nil then we have created a new list in the previous step
          ; so just create the next entry. 
          (cons
-           (list (get-todo-id entry-id)
-                 "_" ; TODO (simultaneous) handle final entry entry-id 
+           (list (car entry-id)
+                 (helper-description-on-last-entry entry-id description)
                  ; Handle terminal case, we don't want a '(())
                  (let ((sublist (construct-todo nil (cdr entry-id) description)))
                    (if (null sublist)
@@ -87,15 +97,15 @@
                ; If exists, simply traverse down and run again
                (let ((list (nth index target-list))
                      (sublist (get-todo-sublist (nth index target-list))))
-                 (cons (list (get-todo-id entry-id)
-                             "_" ; TODO (simultaneous) handle final entry entry-id
+                 (cons (list (get-todo-id list)
+                             (get-todo-description list)
                              (construct-todo sublist (cdr entry-id) description))
                        (remove list target-list)))
                ; TODO: is there a better way to do this `remove list` (see below)
                ; TODO: is there a way to do the above let block via mutation instead? 
                ; Otherwise we need to add a new entry
-               (cons (list (get-todo-id entry-id)
-                           "_" ; TODO (simultaneous) handle final entry entry
+               (cons (list (car entry-id)
+                           (helper-description-on-last-entry entry-id description)
                            ; Handle terminal case, we don't want a '(())
                            (let ((sublist (construct-todo nil (cdr entry-id) description)))
                              (if (null sublist)
@@ -105,7 +115,8 @@
 
 ;; TODO: test 
 (defun add-todo (entry &optional (description "_"))
-  "Adds a new todo entry to `*database*`. Defaults to a blank description if none is provided.
+  "Adds a new todo entry to `*database*`. 
+  Defaults to a blank description if none is provided.
   `entry` may be a symbol, or a list of symbols.
   `description` should be a string that describes the todo entry 
   "
