@@ -1,2 +1,3 @@
-(defpackage :database-tests
-    (:use :test-suite))
+(defpackage :database-tests)
+
+(import :test-suite)
