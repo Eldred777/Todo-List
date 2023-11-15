@@ -28,3 +28,8 @@
 (defun has-child-id (parent child-id)
   ; TODO: implement 
   t)
+
+(defun display-todo-entry (entry &optional (indent-level 0))
+  (loop for x from 1 to indent-level do (format t "  "))
+  (format t "~s ~s~%" (entry-id entry) (description entry))
+  (loop for x in (children entry) do (display-todo-entry x (1+ indent-level))))
