@@ -1,5 +1,7 @@
 (defpackage :todo-list)
 
+(in-package :todo-list)
+
 (require :uiop)
 
 (defun not-null (l)
