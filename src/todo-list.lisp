@@ -1,5 +1,5 @@
 (defpackage :todo-list
-  (:use :cl :todo-entry :todo-database))
+  (:use :cl :entry :database))
 
 (in-package :todo-list)
 

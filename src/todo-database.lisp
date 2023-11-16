@@ -1,4 +1,4 @@
-(defpackage :todo-database
+(defpackage :database
   (:use :cl)
   (:export :load-database :save-database
            :push-to-database :remove-from-database
@@ -8,7 +8,7 @@
 
 (require :uiop)
 
-(in-package :todo-database)
+(in-package :database)
 
 (defparameter *database* nil)
 (defvar *current-database-name* "")
@@ -36,7 +36,10 @@
     (format file "~s" *database*)))
 
 (defun display-database ()
-  (loop for entry in *database* do (display-todo-entry entry)))
+  (loop for entry in *database*
+        do (progn
+            (display-todo-entry entry)
+            (format t "~%"))))
 
 (defun clear-database ()
   (setf *database* nil))

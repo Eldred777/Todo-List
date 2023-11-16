@@ -3,7 +3,8 @@
   (:export :make-todo-entry
            :add-child :add-children
            :display-todo-entry
-           :mutable-remove-if-id))
+           :mutable-remove-if-id
+           :mark-done :mark-undone))
 
 (in-package :todo-entry)
 
@@ -28,7 +29,10 @@
      (children
        :initarg :children
        :initform nil
-       :accessor children)))
+       :accessor children)
+     (completion-status
+       :initform nil
+       :accessor completion-status)))
 
 (defun make-todo-entry (entry-id &optional (description "_") (children nil))
   (make-instance 'todo-entry-class
@@ -45,7 +49,17 @@
 (defun remove-child (parent child-id)
   (mutable-remove-if-id (children parent) child-id))
 
+(defun mark-done (entry)
+  (setf (completion-status entry) t))
+
+(defun mark-undone (entry)
+  (setf (completion-status entry) nil))
+
 (defun display-todo-entry (entry &optional (indent-level 0))
   (loop for x from 1 to indent-level do (format t "  "))
-  (format t "~s ~s~%" (entry-id entry) (description entry))
-  (loop for x in (children entry) do (display-todo-entry x (1+ indent-level))))
+  (format t "~a : ~s ~s~%"
+    (if (completion-status entry) "[x]" "[ ]")
+    (entry-id entry)
+    (description entry))
+  (loop for x in (children entry)
+        do (display-todo-entry x (1+ indent-level))))
