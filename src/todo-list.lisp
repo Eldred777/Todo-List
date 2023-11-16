@@ -1,12 +1,13 @@
 (defpackage :todo-list
-  (:use :todo-entry :todo-database))
+  (:use :cl :todo-entry :todo-database))
+
+(in-package :todo-list)
 
 (defun not-null-p (l)
   (not (null l)))
 
-(defun position-of-todo (name target-list)
-  ; TODO: what does this do???
-  (position (car name) (map 'list #'first target-list)))
+(defun position-of-todo (id target-list)
+  (position id (map 'list #'first target-list)))
 
 (defun helper-description-on-last-entry (entry-id description)
   "Helper function to `construct-todo` that returns `description` when 
@@ -78,7 +79,11 @@
   ; shut up compiler
   )
 
-(defun done-todo (entry)
+
+(defun mark-done (entry)
+  (setf *database* (remove-todo *database* entry)))
+
+(defun mark-undone (entry)
   (setf *database* (remove-todo *database* entry)))
 
 (defun rename-todo-symbol (entry new-name)

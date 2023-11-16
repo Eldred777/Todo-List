@@ -1,12 +1,18 @@
-(defpackage :todo-database)
+(defpackage :todo-database
+  (:use :cl)
+  (:export :load-database :save-database
+           :push-to-database :remove-from-database
+           :clear-current-database
+           :display-database)
+  (:import-from :todo-entry #:display-todo-entry))
 
 (require :uiop)
 
+(in-package :todo-database)
+
 (defparameter *database* nil)
 (defvar *current-database-name* "")
-(defparameter *db-path* (concatenate 'string
-                          (namestring *default-pathname-defaults*)
-                          "db/"))
+(defparameter *db-path* (concatenate 'string (namestring *default-pathname-defaults*) "db/"))
 
 (defmacro coerce-to-string (name)
   (unless (typep name 'string)
@@ -29,5 +35,16 @@
                         :if-does-not-exist :create)
     (format file "~s" *database*)))
 
+(defun display-database ()
+  (loop for entry in *database* do (display-todo-entry entry)))
+
 (defun clear-database ()
   (setf *database* nil))
+
+(defun push-to-database (entry)
+  (push entry *database*))
+
+(defun remove-from-database (id)
+  (todo-entry:mutable-remove-if-id *database* id))
+
+;;; TODO: clear and push to subitems 
